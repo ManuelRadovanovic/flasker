@@ -1,5 +1,6 @@
 from enum import unique
-from flask import Flask, render_template, flash
+from flask import Flask, render_template, flash, request
+from flask.wrappers import Request
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
@@ -40,6 +41,31 @@ class UserForm(FlaskForm):
     name = StringField("What's Your Name", validators=[DataRequired()])
     email = StringField("Email", validators=[DataRequired()])
     submit = SubmitField("Sumbit")
+
+# Update Database Record
+@app.route('/update/<int:id>', methods=['GET', 'POST'])
+def update(id):
+    form = UserForm()
+    name_to_update = Users.get_or_404(id)
+    if request.method == "POST":
+        name_to_update.name = request.form['name']
+        name_to_update.email = request.form['email']
+        try:
+            db.session.commit()
+            flash("User Updated Successfully!")
+            return render_template("update.html", form=form,
+                                                name_to_update=name_to_update)
+        except:
+            db.session.commit()
+            flash("Error! Looks like there was a problem. Try again!")
+            return render_template("update.html", form=form,
+                                                name_to_update=name_to_update)
+
+    else:
+        return render_template("update.html", form=form,
+                                                name_to_update=name_to_update)
+
+
 
 # Create a Form Class
 class NamerForm(FlaskForm):
@@ -109,7 +135,6 @@ def add_user():
             db.session.commit()
         name = form.name.data
         form.name.data = ''
-        form.name.data = ''
         flash("User Added Successfully!")
     
     our_users = Users.query.order_by(Users.date_added)
@@ -141,14 +166,14 @@ def user(name):
 # Create Custom Error Pages
 
 # Invalid URL
-@app.errorhandler(404)
-def page_not_found(e):
-    return render_template("404.html"), 404
+# @app.errorhandler(404)
+# def page_not_found(e):
+    #return render_template("404.html"), 404
 
 # Interval Server Error 
-@app.errorhandler(500)
-def page_not_found(e):
-    return render_template("500.html"), 500
+# @app.errorhandler(500)
+# def page_not_found(e):
+    # return render_template("404.html"), 500
 
 # Create Name Page
 @app.route('/name', methods=['GET', 'POST'])

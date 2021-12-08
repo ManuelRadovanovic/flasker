@@ -21,7 +21,7 @@
          {% for our_user in our_users %}
             <tr>
                 <td>{{ our_user.id }}. 
-                <a href="{{ url_for('update', id=our_user.id)}}">{{ our_user.name }}</a> - 
+                {{ our_user.name }} - 
                 {{ our_user.email }} </td>
             </tr>
          {% endfor %}
@@ -33,14 +33,14 @@
 
         <div class="shadow p-3 mb-5 bg-body rounded">
 
-            <form action="/update/{{ name_to_update.id }}" method='POST'>
+            <form method='POST'>
                 {{ form.hidden_tag() }}
 
                 {{ form.name.label(class="form-label") }}
-                {{ form.name(class="form-control", value=name_to_update.name) }}
+                {{ form.name(class="form-control") }}
 
                 {{ form.email.label(class="form-label") }}
-                {{ form.email(class="form-control", value=name_to_update.email) }}
+                {{ form.email(class="form-control") }}
 
                 <br/>
                 {{ form.submit(class="btn btn-success") }}
@@ -54,7 +54,7 @@
         {% for our_user in our_users %}
             <tr>
                 <td>{{ our_user.id }}. 
-                <a href="{{ url_for('update', id=our_user.id)}}">{{ our_user.name }}</a> - 
+                {{ our_user.name }} - 
                 {{ our_user.email }}</td> 
             </tr>
         {% endfor %}
